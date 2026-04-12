@@ -21,6 +21,7 @@
 	"confirm_clear_all_msg": "Are you sure you want to remove all items?",
 
 	"toolbar_add_sibling_label": "Add Sibling:",
+	"toolbar_add_child_label": "Add Child:",
 	"toolbar_add_string": "+ String",
 	"toolbar_add_object": "+ Object",
 	"toolbar_add_array": "+ Array",

@@ -170,6 +170,9 @@ class App:
         )
 
         # ── Add Child ──
+        ttk.Label(
+            self._toolbar_frame, text=t("toolbar_add_child_label")
+        ).pack(side="left", padx=(4, 2))
         btn = ttk.Button(
             self._toolbar_frame, text=t("toolbar_add_child"), width=9,
             command=lambda: self.json_tree.add_child(),

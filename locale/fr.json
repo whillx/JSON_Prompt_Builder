@@ -21,6 +21,7 @@
 	"confirm_clear_all_msg": "Êtes-vous sûr de vouloir supprimer tous les éléments ?",
 
 	"toolbar_add_sibling_label": "Ajouter voisin :",
+	"toolbar_add_child_label": "Ajouter enfant :",
 	"toolbar_add_string": "+ Texte",
 	"toolbar_add_object": "+ Objet",
 	"toolbar_add_array": "+ Liste",
