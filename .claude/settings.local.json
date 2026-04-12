@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from config import DEFAULT_TEMPLATE, APP_TITLE; from file_handler import FileHandler; from json_tree import JsonTreeView; from app import App; print\\('All imports OK'\\)\")",
+      "Bash(python -c \"from tooltip import Tooltip; from app import App; print\\('All imports OK'\\)\")",
+      "Bash(python -c ':*)",
+      "Bash(chmod +x \"D:/Works/#Tools/JSON_Prompt_Builder/JSON_Prompt_Builder.command\")",
+      "Bash(gh repo:*)",
+      "Bash(cmd.exe /c \"where gh\")"
+    ]
+  }
+}
