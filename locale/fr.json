@@ -36,6 +36,8 @@
 	"ctx_add_sibling": "Ajouter un voisin",
 	"ctx_add_child": "Ajouter un enfant",
 	"ctx_convert_to": "Convertir en",
+	"ctx_copy": "Copier",
+	"ctx_paste": "Coller",
 	"ctx_remove": "Supprimer",
 	"type_string": "Texte",
 	"type_number": "Nombre",

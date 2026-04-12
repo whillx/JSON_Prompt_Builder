@@ -15,6 +15,12 @@ class JsonTreeView(ttk.Frame):
         self._edit_column = None
         self._root_is_list = False
         self._detail_updating = False
+        self._clipboard = None
+        self._drag_item = None
+        self._drag_start_y = 0
+        self._drag_threshold = 5
+        self._dragging = False
+        self._drop_indicator = None
         self._setup_widgets()
         self._setup_tags()
         self._setup_bindings()
@@ -100,6 +106,11 @@ class JsonTreeView(ttk.Frame):
         self.tree.bind("<Delete>", lambda e: self.remove_item())
         self.tree.bind("<Insert>", lambda e: self.add_sibling())
         self.tree.bind("<<TreeviewSelect>>", self._on_tree_select)
+
+        # Drag-and-drop reordering
+        self.tree.bind("<ButtonPress-1>", self._on_drag_start)
+        self.tree.bind("<B1-Motion>", self._on_drag_motion)
+        self.tree.bind("<ButtonRelease-1>", self._on_drag_end)
 
         # Apply detail panel edits back to the tree
         self._detail_key_var.trace_add("write", self._on_detail_key_changed)
@@ -430,6 +441,94 @@ class JsonTreeView(ttk.Frame):
         count = len(self.tree.get_children(parent))
         self.tree.item(parent, values=(f"[{count} items]",))
 
+    # ── Copy and paste ───────────────────────────────────────────
+
+    def copy_item(self):
+        """Copy the selected item (and its children) to the clipboard."""
+        selected = self.tree.selection()
+        if not selected:
+            return
+        item = selected[0]
+        key = self.tree.item(item, "text")
+        value = self._item_to_value(item)
+        tags = list(self.tree.item(item, "tags"))
+        self._clipboard = {"key": key, "value": value, "tag": tags[0] if tags else "str"}
+
+    def paste_item(self):
+        """Paste the clipboard item as a sibling after the selected item."""
+        if not self._clipboard:
+            return
+        selected = self.tree.selection()
+        if not selected:
+            # Paste at root level
+            parent = ""
+            index = "end"
+        else:
+            item = selected[0]
+            parent = self.tree.parent(item)
+            index = self.tree.index(item) + 1
+
+        key = self._clipboard["key"]
+        value = self._clipboard["value"]
+
+        # If pasting into a list parent, key will be reindexed automatically
+        parent_tags = self.tree.item(parent, "tags") if parent else ()
+        is_list_parent = "list" in parent_tags
+        if not parent and self._root_is_list:
+            is_list_parent = True
+
+        if is_list_parent:
+            key = "[0]"  # Placeholder, will be reindexed
+
+        new_item = self._insert_item_at(parent, index, key, value)
+
+        if is_list_parent:
+            self._reindex_list(parent)
+            if parent:
+                self._update_list_count(parent)
+
+        self.tree.selection_set(new_item)
+        self.tree.see(new_item)
+
+    def _insert_item_at(self, parent, index, key, value):
+        """Insert a value (possibly nested) at a specific position and return the item id."""
+        if isinstance(value, dict):
+            node = self.tree.insert(
+                parent, index, text=key,
+                values=("{...}",), tags=("dict",), open=True,
+            )
+            for k, v in value.items():
+                self._insert_item_at(node, "end", str(k), v)
+            return node
+        elif isinstance(value, list):
+            node = self.tree.insert(
+                parent, index, text=key,
+                values=(f"[{len(value)} items]",), tags=("list",), open=True,
+            )
+            for i, v in enumerate(value):
+                self._insert_item_at(node, "end", f"[{i}]", v)
+            return node
+        elif isinstance(value, bool):
+            return self.tree.insert(
+                parent, index, text=key,
+                values=(str(value).lower(),), tags=("bool",),
+            )
+        elif isinstance(value, (int, float)):
+            return self.tree.insert(
+                parent, index, text=key,
+                values=(str(value),), tags=("num",),
+            )
+        elif value is None:
+            return self.tree.insert(
+                parent, index, text=key,
+                values=("null",), tags=("null",),
+            )
+        else:
+            return self.tree.insert(
+                parent, index, text=key,
+                values=(str(value),), tags=("str",),
+            )
+
     # ── Inline editing ────────────────────────────────────────────
 
     def _on_double_click(self, event):
@@ -580,6 +679,137 @@ class JsonTreeView(ttk.Frame):
             menu.add_cascade(label=t("ctx_convert_to"), menu=type_menu)
 
             menu.add_separator()
+            menu.add_command(label=t("ctx_copy"), command=self.copy_item)
+
+        # Paste is available when clipboard has data
+        if self._clipboard:
+            menu.add_command(label=t("ctx_paste"), command=self.paste_item)
+
+        if item:
+            menu.add_separator()
             menu.add_command(label=t("ctx_remove"), command=self.remove_item)
 
         menu.post(event.x_root, event.y_root)
+
+    # ── Drag-and-drop reordering ─────────────────────────────────
+
+    def _on_drag_start(self, event):
+        """Record the item under the cursor as a potential drag source."""
+        item = self.tree.identify_row(event.y)
+        if item:
+            self._drag_item = item
+            self._drag_start_y = event.y
+            self._dragging = False
+
+    def _on_drag_motion(self, event):
+        """Show a drop indicator line while dragging."""
+        if not self._drag_item or not self.tree.exists(self._drag_item):
+            return
+
+        # Only start dragging after moving past the threshold
+        if not self._dragging:
+            if abs(event.y - self._drag_start_y) < self._drag_threshold:
+                return
+            self._dragging = True
+            self.tree.configure(cursor="hand2")
+
+        # Determine the drop target position
+        target = self.tree.identify_row(event.y)
+        if not target or target == self._drag_item:
+            self._remove_drop_indicator()
+            return
+
+        # Only allow reordering among siblings (same parent)
+        drag_parent = self.tree.parent(self._drag_item)
+        target_parent = self.tree.parent(target)
+        if drag_parent != target_parent:
+            self._remove_drop_indicator()
+            return
+
+        # Draw drop indicator line
+        bbox = self.tree.bbox(target)
+        if not bbox:
+            return
+
+        mid_y = bbox[1] + bbox[3] // 2
+        if event.y < mid_y:
+            indicator_y = bbox[1]  # Above the target
+        else:
+            indicator_y = bbox[1] + bbox[3]  # Below the target
+
+        self._draw_drop_indicator(indicator_y)
+
+    def _on_drag_end(self, event):
+        """Move the dragged item to the drop position."""
+        self._remove_drop_indicator()
+        self.tree.configure(cursor="")
+
+        if not self._dragging or not self._drag_item:
+            self._drag_item = None
+            self._dragging = False
+            return
+
+        if not self.tree.exists(self._drag_item):
+            self._drag_item = None
+            self._dragging = False
+            return
+
+        target = self.tree.identify_row(event.y)
+        if not target or target == self._drag_item:
+            self._drag_item = None
+            self._dragging = False
+            return
+
+        # Only allow reordering among siblings
+        drag_parent = self.tree.parent(self._drag_item)
+        target_parent = self.tree.parent(target)
+        if drag_parent != target_parent:
+            self._drag_item = None
+            self._dragging = False
+            return
+
+        # Determine insert position (above or below target)
+        bbox = self.tree.bbox(target)
+        if bbox:
+            mid_y = bbox[1] + bbox[3] // 2
+            target_index = self.tree.index(target)
+            if event.y < mid_y:
+                new_index = target_index
+            else:
+                new_index = target_index + 1
+
+            # Adjust if dragging downward (source removal shifts indices)
+            drag_index = self.tree.index(self._drag_item)
+            if drag_index < new_index:
+                new_index -= 1
+
+            self.tree.move(self._drag_item, drag_parent, new_index)
+            self.tree.selection_set(self._drag_item)
+
+            # Reindex if parent is a list
+            parent_tags = self.tree.item(drag_parent, "tags") if drag_parent else ()
+            if not drag_parent and self._root_is_list:
+                self._reindex_list(drag_parent)
+            elif "list" in parent_tags:
+                self._reindex_list(drag_parent)
+
+            self._on_tree_select()
+
+        self._drag_item = None
+        self._dragging = False
+
+    def _draw_drop_indicator(self, y):
+        """Draw a horizontal line in the tree to indicate the drop position."""
+        self._remove_drop_indicator()
+        # Use a small frame as the indicator line
+        self._drop_indicator = tk.Frame(
+            self.tree, height=2, bg="#4444ff", relief="flat"
+        )
+        tree_width = self.tree.winfo_width()
+        self._drop_indicator.place(x=0, y=y, width=tree_width, height=2)
+
+    def _remove_drop_indicator(self):
+        """Remove the drop indicator line."""
+        if self._drop_indicator:
+            self._drop_indicator.destroy()
+            self._drop_indicator = None
