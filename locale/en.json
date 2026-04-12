@@ -36,6 +36,8 @@
 	"ctx_add_sibling": "Add Sibling",
 	"ctx_add_child": "Add Child",
 	"ctx_convert_to": "Convert To",
+	"ctx_copy": "Copy",
+	"ctx_paste": "Paste",
 	"ctx_remove": "Remove",
 	"type_string": "String",
 	"type_number": "Number",
