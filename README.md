@@ -18,7 +18,7 @@ A lightweight GUI tool for creating and editing structured JSON prompts for AI i
 - **Persistent preferences** — language choice is saved to `user.ini` and restored on next launch
 - **Keyboard shortcuts** — Ctrl+N, Ctrl+O, Ctrl+S, Insert, Delete, and more
 
-![UI image](images\UI.png)
+![UI image](images/UI.png)
 
 ## Quick Start
 
