@@ -1,0 +1,51 @@
+{
+	"Scène": {
+		"Description générale": "Une femme libère une lanterne en papier qui s'élève dans le ciel nocturne, rejoignant des centaines d'autres au-dessus d'un village lacustre",
+		"Décor": "Village lacustre traditionnel pendant une fête des lanternes",
+		"Moment de la journée": "Nuit",
+		"Météo": "Calme, légère brume flottant au-dessus de l'eau",
+		"Objets": [
+			"Lanterne en papier lumineuse avec une flamme vacillante à l'intérieur",
+			"Ponton en bois s'étendant au-dessus de l'eau calme",
+			"Bâtiments traditionnels en pierre et en bois",
+			"Des centaines de lanternes flottant dans le ciel",
+			"Brume planant au ras de la surface du lac"
+		]
+	},
+	"Style": {
+		"Médium": "Aspect cinématographique prise de vue réelle",
+		"Esthétique": "Onirique, chaleureux, intime",
+		"Palette de couleurs": "Ciel nocturne indigo profond, lueur chaude orange et or des lanternes, reflets doux sur l'eau",
+		"Influences": "Étalonnage des couleurs de Zhang Yimou, longs plans d'Emmanuel Lubezki"
+	},
+	"Caméra": {
+		"Plan d'ouverture": "Gros plan sur les mains libérant la lanterne",
+		"Mouvement": "Lente montée en grue suivant l'ascension de la lanterne, puis élargissement révélant des centaines de lanternes s'élevant",
+		"Objectif": "Anamorphique 35 mm",
+		"Profondeur de champ": "Faible au début sur les mains, s'approfondissant progressivement à mesure que le plan s'élargit",
+		"Vitesse": "Ralenti doux, 48 ips"
+	},
+	"Éclairage": {
+		"Lumière principale": "Lueur chaude de la lanterne illuminant le visage de la femme",
+		"Ambiance": "Clair de lune froid sur la surface du lac",
+		"Éclairages pratiques": "Des centaines de lanternes fournissant des points lumineux chauds dispersés",
+		"Atmosphère": "Brume volumétrique douce captant la lumière des lanternes"
+	},
+	"Mouvement": {
+		"Mouvement du sujet": "Lanterne tournant doucement en s'élevant, flamme vacillante à l'intérieur",
+		"Mouvement de caméra": "Montée en grue fluide, sans tremblement, continue",
+		"Mouvement environnemental": "Brume dérivant lentement, eau ondulant sous une légère brise",
+		"Rythme": "Lent et contemplatif, plan-séquence ininterrompu"
+	},
+	"Indications sonores": {
+		"Son ambiant": "Murmure lointain de la foule, léger clapotis de l'eau",
+		"Tonalité musicale": "Cordes et bois doux, crescendo progressif",
+		"Son clé": "Léger souffle de la lanterne prenant l'air"
+	},
+	"Technique": {
+		"Résolution": "4K",
+		"Fréquence d'images": "48 ips pour un ralenti subtil",
+		"Durée": "8 secondes",
+		"Rapport d'aspect": "2.39:1 écran large cinématographique"
+	}
+}

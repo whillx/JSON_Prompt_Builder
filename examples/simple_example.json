@@ -1,0 +1,28 @@
+{
+	"Scene": {
+		"General Description": "",
+		"Environment": "",
+		"Time of Day": "",
+		"Weather": "",
+		"Objects": []
+	},
+	"Style": {
+		"Medium": "",
+		"Aesthetic": "",
+		"Color Palette": ""
+	},
+	"Camera": {
+		"Shot Type": "",
+		"Angle": "",
+		"Lens": "",
+		"Depth of Field": ""
+	},
+	"Lighting": {
+		"Key Light": "",
+		"Atmosphere": ""
+	},
+	"Technical": {
+		"Resolution": "",
+		"Aspect Ratio": ""
+	}
+}

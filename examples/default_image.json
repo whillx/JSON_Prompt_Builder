@@ -1,0 +1,45 @@
+{
+	"Scene": {
+		"General Description": "A lone astronaut standing on a barren alien plateau, gazing at a massive ringed planet on the horizon",
+		"Environment": "Vast desert landscape with towering rock spires and a massive ringed planet on the horizon",
+		"Time of Day": "Golden hour",
+		"Weather": "Clear sky with faint auroral streaks",
+		"Objects": [
+			"Weathered spacesuit with reflective visor",
+			"Towering sandstone rock spires",
+			"Small clusters of bioluminescent alien flora",
+			"Scattered pebbles and cracked dry ground",
+			"Distant ringed planet dominating the sky"
+		]
+	},
+	"Style": {
+		"Medium": "Photorealistic digital art",
+		"Aesthetic": "Cinematic, epic scale, awe-inspiring",
+		"Color Palette": "Warm amber foreground, cool teal and violet sky",
+		"Influences": "Simon Stalenhag, Roger Deakins cinematography"
+	},
+	"Camera": {
+		"Shot Type": "Wide establishing shot",
+		"Angle": "Low angle, slightly below eye level",
+		"Lens": "24mm wide-angle",
+		"Depth of Field": "Deep focus, everything sharp",
+		"Focal Point": "The astronaut silhouette against the planet"
+	},
+	"Lighting": {
+		"Key Light": "Warm directional sunlight from the left",
+		"Fill Light": "Soft ambient bounce from the sand",
+		"Rim Light": "Subtle backlight outlining the astronaut's helmet",
+		"Atmosphere": "Volumetric light rays through distant haze"
+	},
+	"Details": {
+		"Texture": "Fine dust particles in the air, weathered spacesuit fabric",
+		"Foreground": "Cracked dry ground with small alien flora",
+		"Background": "Layered mountain silhouettes fading into atmospheric perspective",
+		"Special Effects": "Lens flare from the sun, faint star field in the upper sky"
+	},
+	"Technical": {
+		"Resolution": "8K",
+		"Render Quality": "Ultra-detailed, photorealistic rendering",
+		"Aspect Ratio": "16:9"
+	}
+}

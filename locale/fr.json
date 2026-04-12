@@ -1,0 +1,59 @@
+{
+	"menu_file": "Fichier",
+	"menu_edit": "Édition",
+	"menu_language": "Langue",
+
+	"file_new": "Nouveau",
+	"file_open": "Ouvrir...",
+	"file_save": "Enregistrer",
+	"file_save_as": "Enregistrer sous...",
+	"file_load_example": "Charger un exemple",
+	"file_exit": "Quitter",
+
+	"edit_add_sibling": "Ajouter un voisin",
+	"edit_remove": "Supprimer",
+	"edit_add_child": "Ajouter un enfant",
+	"edit_clear_all": "Tout effacer",
+	"edit_expand_all": "Tout déplier",
+	"edit_collapse_all": "Tout replier",
+
+	"confirm_clear_all_title": "Tout effacer",
+	"confirm_clear_all_msg": "Êtes-vous sûr de vouloir supprimer tous les éléments ?",
+
+	"toolbar_add_sibling_label": "Ajouter voisin :",
+	"toolbar_add_string": "+ Texte",
+	"toolbar_add_object": "+ Objet",
+	"toolbar_add_array": "+ Liste",
+	"toolbar_add_child": "+ Enfant",
+	"toolbar_remove": "\u2212 Supprimer",
+
+	"tooltip_add_string": "Ajouter un champ texte à côté de l'élément sélectionné",
+	"tooltip_add_object": "Ajouter un objet { } à côté de l'élément sélectionné",
+	"tooltip_add_array": "Ajouter une liste [ ] à côté de l'élément sélectionné",
+	"tooltip_add_child": "Ajouter un champ à l'intérieur de l'objet ou de la liste sélectionné",
+	"tooltip_remove": "Supprimer l'élément sélectionné et ses enfants",
+
+	"ctx_add_sibling": "Ajouter un voisin",
+	"ctx_add_child": "Ajouter un enfant",
+	"ctx_convert_to": "Convertir en",
+	"ctx_remove": "Supprimer",
+	"type_string": "Texte",
+	"type_number": "Nombre",
+	"type_boolean": "Booléen",
+	"type_null": "Nul",
+	"type_object": "Objet",
+	"type_array": "Liste",
+
+	"tree_heading_key": "Clé",
+	"tree_heading_value": "Valeur",
+
+	"title_untitled": "Sans titre",
+
+	"examples_no_folder": "(aucun dossier d'exemples)",
+	"examples_none_found": "(aucun exemple trouvé)",
+
+	"error_title": "Erreur",
+	"error_open_file": "Impossible d'ouvrir le fichier :",
+	"error_save_file": "Impossible d'enregistrer le fichier :",
+	"error_load_example": "Impossible de charger l'exemple :"
+}

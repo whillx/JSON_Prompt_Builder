@@ -1,0 +1,51 @@
+{
+	"Scene": {
+		"General Description": "A woman releases a paper lantern that drifts upward into the night sky, joining hundreds of others above a lakeside village",
+		"Setting": "Traditional lakeside village during a lantern festival",
+		"Time of Day": "Night",
+		"Weather": "Calm, light mist hovering over the water",
+		"Objects": [
+			"Glowing paper lantern with a flickering flame inside",
+			"Wooden dock extending over still water",
+			"Traditional stone and timber village buildings",
+			"Hundreds of lanterns floating in the sky",
+			"Mist hovering low over the lake surface"
+		]
+	},
+	"Style": {
+		"Medium": "Cinematic live-action look",
+		"Aesthetic": "Dreamlike, warm, intimate",
+		"Color Palette": "Deep indigo night sky, warm orange and gold lantern glow, soft reflections on water",
+		"Influences": "Zhang Yimou color grading, Emmanuel Lubezki long takes"
+	},
+	"Camera": {
+		"Opening Shot": "Close-up on hands releasing the lantern",
+		"Movement": "Slow crane up following the lantern's ascent, then widening to reveal hundreds of lanterns rising",
+		"Lens": "35mm anamorphic",
+		"Depth of Field": "Shallow at start on the hands, gradually deepening as the shot widens",
+		"Speed": "Gentle slow motion, 48fps"
+	},
+	"Lighting": {
+		"Key Light": "Warm glow from the lantern illuminating the woman's face",
+		"Ambient": "Cool moonlight on the lake surface",
+		"Practicals": "Hundreds of lanterns providing scattered warm point lights",
+		"Atmosphere": "Soft volumetric mist catching the lantern light"
+	},
+	"Motion": {
+		"Subject Motion": "Lantern gently rotating as it rises, flickering flame inside",
+		"Camera Motion": "Smooth upward crane, no shake, fluid and continuous",
+		"Environmental Motion": "Mist drifting slowly, water rippling from a light breeze",
+		"Pacing": "Slow and contemplative, single unbroken shot"
+	},
+	"Audio Cues": {
+		"Ambient Sound": "Distant crowd murmur, gentle water lapping",
+		"Music Tone": "Soft strings and woodwind, building gradually",
+		"Key Sound": "Soft whoosh of the lantern catching air"
+	},
+	"Technical": {
+		"Resolution": "4K",
+		"Frame Rate": "48fps for subtle slow motion",
+		"Duration": "8 seconds",
+		"Aspect Ratio": "2.39:1 cinematic widescreen"
+	}
+}

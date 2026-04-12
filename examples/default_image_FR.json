@@ -1,0 +1,45 @@
+{
+	"Scène": {
+		"Description générale": "Un astronaute solitaire debout sur un plateau extraterrestre aride, contemplant une immense planète à anneaux à l'horizon",
+		"Environnement": "Vaste paysage désertique avec des flèches rocheuses imposantes et une planète à anneaux massive à l'horizon",
+		"Moment de la journée": "Heure dorée",
+		"Météo": "Ciel dégagé avec de légères traînées aurorales",
+		"Objets": [
+			"Combinaison spatiale usée avec visière réfléchissante",
+			"Flèches rocheuses de grès imposantes",
+			"Petits amas de flore extraterrestre bioluminescente",
+			"Cailloux éparpillés et sol sec craquelé",
+			"Planète à anneaux lointaine dominant le ciel"
+		]
+	},
+	"Style": {
+		"Médium": "Art numérique photoréaliste",
+		"Esthétique": "Cinématographique, échelle épique, inspirant l'émerveillement",
+		"Palette de couleurs": "Ambre chaud au premier plan, ciel bleu sarcelle et violet",
+		"Influences": "Simon Stalenhag, cinématographie de Roger Deakins"
+	},
+	"Caméra": {
+		"Type de plan": "Plan d'ensemble large",
+		"Angle": "Contre-plongée légère, légèrement en dessous du niveau des yeux",
+		"Objectif": "Grand-angle 24 mm",
+		"Profondeur de champ": "Mise au point étendue, tout est net",
+		"Point focal": "La silhouette de l'astronaute contre la planète"
+	},
+	"Éclairage": {
+		"Lumière principale": "Lumière directionnelle chaude du soleil venant de la gauche",
+		"Lumière d'appoint": "Rebond ambiant doux depuis le sable",
+		"Contre-jour": "Rétro-éclairage subtil soulignant le casque de l'astronaute",
+		"Atmosphère": "Rayons de lumière volumétrique à travers la brume lointaine"
+	},
+	"Détails": {
+		"Texture": "Fines particules de poussière dans l'air, tissu usé de la combinaison spatiale",
+		"Premier plan": "Sol sec craquelé avec de petites plantes extraterrestres",
+		"Arrière-plan": "Silhouettes de montagnes en couches s'estompant dans la perspective atmosphérique",
+		"Effets spéciaux": "Flare de l'objectif depuis le soleil, léger champ d'étoiles dans le ciel supérieur"
+	},
+	"Technique": {
+		"Résolution": "8K",
+		"Qualité de rendu": "Ultra-détaillé, rendu photoréaliste",
+		"Rapport d'aspect": "16:9"
+	}
+}

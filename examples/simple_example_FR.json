@@ -1,0 +1,28 @@
+{
+	"Scène": {
+		"Description générale": "",
+		"Environnement": "",
+		"Moment de la journée": "",
+		"Météo": "",
+		"Objets": []
+	},
+	"Style": {
+		"Médium": "",
+		"Esthétique": "",
+		"Palette de couleurs": ""
+	},
+	"Caméra": {
+		"Type de plan": "",
+		"Angle": "",
+		"Objectif": "",
+		"Profondeur de champ": ""
+	},
+	"Éclairage": {
+		"Lumière principale": "",
+		"Atmosphère": ""
+	},
+	"Technique": {
+		"Résolution": "",
+		"Rapport d'aspect": ""
+	}
+}

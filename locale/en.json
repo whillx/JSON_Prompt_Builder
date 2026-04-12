@@ -1,0 +1,59 @@
+{
+	"menu_file": "File",
+	"menu_edit": "Edit",
+	"menu_language": "Language",
+
+	"file_new": "New",
+	"file_open": "Open...",
+	"file_save": "Save",
+	"file_save_as": "Save As...",
+	"file_load_example": "Load Example",
+	"file_exit": "Exit",
+
+	"edit_add_sibling": "Add Sibling",
+	"edit_remove": "Remove",
+	"edit_add_child": "Add Child",
+	"edit_clear_all": "Clear All",
+	"edit_expand_all": "Expand All",
+	"edit_collapse_all": "Collapse All",
+
+	"confirm_clear_all_title": "Clear All",
+	"confirm_clear_all_msg": "Are you sure you want to remove all items?",
+
+	"toolbar_add_sibling_label": "Add Sibling:",
+	"toolbar_add_string": "+ String",
+	"toolbar_add_object": "+ Object",
+	"toolbar_add_array": "+ Array",
+	"toolbar_add_child": "+ Child",
+	"toolbar_remove": "\u2212 Remove",
+
+	"tooltip_add_string": "Add a new text field next to the selected item",
+	"tooltip_add_object": "Add a new object { } next to the selected item",
+	"tooltip_add_array": "Add a new array [ ] next to the selected item",
+	"tooltip_add_child": "Add a new field inside the selected object or array",
+	"tooltip_remove": "Delete the selected item and its children",
+
+	"ctx_add_sibling": "Add Sibling",
+	"ctx_add_child": "Add Child",
+	"ctx_convert_to": "Convert To",
+	"ctx_remove": "Remove",
+	"type_string": "String",
+	"type_number": "Number",
+	"type_boolean": "Boolean",
+	"type_null": "Null",
+	"type_object": "Object",
+	"type_array": "Array",
+
+	"tree_heading_key": "Key",
+	"tree_heading_value": "Value",
+
+	"title_untitled": "Untitled",
+
+	"examples_no_folder": "(no examples folder)",
+	"examples_none_found": "(no examples found)",
+
+	"error_title": "Error",
+	"error_open_file": "Failed to open file:",
+	"error_save_file": "Failed to save file:",
+	"error_load_example": "Failed to load example:"
+}
