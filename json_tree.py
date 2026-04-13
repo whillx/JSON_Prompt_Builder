@@ -136,6 +136,10 @@ class JsonTreeView(ttk.Frame):
             text=self._t("tree_heading_value") + ":"
         )
 
+    def update_suggestions(self, suggestions):
+        """Replace the suggestions dictionary."""
+        self._suggestions = suggestions or {}
+
     # ── Detail panel ──────────────────────────────────────────────
 
     def _on_tree_select(self, event=None):

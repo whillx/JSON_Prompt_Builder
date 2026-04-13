@@ -22,7 +22,7 @@ class LocaleHandler:
         if not os.path.isdir(LOCALE_DIR):
             return langs
         for fname in sorted(os.listdir(LOCALE_DIR)):
-            if fname.lower().endswith(".json"):
+            if fname.lower().endswith(".json") and not fname.startswith("suggestion_"):
                 code = os.path.splitext(fname)[0]
                 langs[code] = code
         # Friendly display names for known languages
