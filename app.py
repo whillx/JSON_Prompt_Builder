@@ -210,6 +210,8 @@ class App:
 
     def _on_tree_selection_changed(self, event=None):
         """Grey out Add Child when the selected item cannot have children."""
+        if not hasattr(self, "json_tree"):
+            return
         selected = self.json_tree.tree.selection()
         if selected:
             tags = self.json_tree.tree.item(selected[0], "tags")
