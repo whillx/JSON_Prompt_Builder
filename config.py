@@ -9,18 +9,27 @@ EXAMPLES_DIR = os.path.join(APP_DIR, "examples")
 LOCALE_DIR = os.path.join(APP_DIR, "locale")
 FILE_TYPES = [("JSON files", "*.json"), ("All files", "*.*")]
 
-# Maps language codes to their simple_example file names.
-# Falls back to simple_example.json for unlisted languages.
-_TEMPLATE_FILES = {
-    "en": "simple_example.json",
-    "fr": "simple_example_FR.json",
-}
+_DEFAULT_TEMPLATE_BASE = "empty_template"
 
 
 def load_default_template(lang="en"):
-    """Load the default template for the given language."""
-    filename = _TEMPLATE_FILES.get(lang, _TEMPLATE_FILES["en"])
-    path = os.path.join(EXAMPLES_DIR, filename)
+    """Load the default template for the given language.
+
+    Looks for empty_template_{LANG}.json (e.g. empty_template_FR.json)
+    in the examples folder. Falls back to empty_template.json for
+    English or when no localized file exists.
+    """
+    if lang and lang.lower() != "en":
+        localized = f"{_DEFAULT_TEMPLATE_BASE}_{lang.upper()}.json"
+        path = os.path.join(EXAMPLES_DIR, localized)
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    # Fallback to the base English template
+    path = os.path.join(EXAMPLES_DIR, f"{_DEFAULT_TEMPLATE_BASE}.json")
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
