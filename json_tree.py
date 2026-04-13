@@ -14,6 +14,7 @@ class JsonTreeView(ttk.Frame):
         self._edit_entry = None
         self._edit_item = None
         self._edit_column = None
+        self._suggestion_popup = None
         self._suggestion_listbox = None
         self._root_is_list = False
         self._detail_updating = False
@@ -605,24 +606,31 @@ class JsonTreeView(ttk.Frame):
                 self._show_suggestions(entry, bbox, suggestions)
 
     def _show_suggestions(self, entry, bbox, suggestions):
-        """Show a dropdown listbox with suggestions below the edit entry."""
+        """Show a floating dropdown with suggestions below the edit entry."""
         self._dismiss_suggestions()
 
+        # Use a Toplevel window so the dropdown floats above all widgets
+        popup = tk.Toplevel(self.tree)
+        popup.wm_overrideredirect(True)
+
         listbox = tk.Listbox(
-            self.tree, relief="solid", borderwidth=1,
+            popup, relief="solid", borderwidth=1,
             selectmode="browse", exportselection=False,
         )
+        listbox.pack(fill="both", expand=True)
         for s in suggestions:
             listbox.insert("end", s)
 
-        # Position below the entry
+        # Position below the entry in screen coordinates
         max_visible = min(len(suggestions), 8)
         row_height = 18
         lb_height = max_visible * row_height + 4
         lb_width = max(bbox[2], 150)
-        listbox.place(x=bbox[0], y=bbox[1] + bbox[3], width=lb_width, height=lb_height)
-        listbox.lift()
+        screen_x = self.tree.winfo_rootx() + bbox[0]
+        screen_y = self.tree.winfo_rooty() + bbox[1] + bbox[3]
+        popup.wm_geometry(f"{lb_width}x{lb_height}+{screen_x}+{screen_y}")
 
+        self._suggestion_popup = popup
         self._suggestion_listbox = listbox
         self._suggestion_all = suggestions
 
@@ -659,17 +667,28 @@ class JsonTreeView(ttk.Frame):
 
     def _dismiss_suggestions(self):
         """Remove the suggestion dropdown if it exists."""
-        if self._suggestion_listbox:
-            self._suggestion_listbox.destroy()
+        if self._suggestion_popup:
+            self._suggestion_popup.destroy()
+            self._suggestion_popup = None
             self._suggestion_listbox = None
             self._suggestion_all = []
 
     def _on_edit_focus_out(self):
         """Handle focus leaving the edit entry."""
-        # Check if focus went to the suggestion listbox — if so, don't finish
+        # Check if focus went to the suggestion popup — if so, don't finish
         focused = self.tree.focus_get()
         if focused is self._suggestion_listbox:
             return
+        if self._suggestion_popup:
+            try:
+                # Also check if focus is on any child of the popup
+                focus_w = self.tree.winfo_containing(
+                    self.tree.winfo_pointerx(), self.tree.winfo_pointery()
+                )
+                if focus_w and str(focus_w).startswith(str(self._suggestion_popup)):
+                    return
+            except Exception:
+                pass
         self._finish_edit()
 
     def _finish_edit(self):
