@@ -17,18 +17,28 @@ class LocaleHandler:
         self.set_language(lang or DEFAULT_LANG)
 
     def _scan_languages(self):
-        """Return a dict of {code: display_name} for available locale files."""
+        """Return a dict of {code: display_name} for available locale files.
+
+        Each locale file can declare a ``language_name`` key (e.g.
+        "English", "Français") which is used as the display name in the
+        Language menu.  Falls back to the file's base name if missing.
+        """
         langs = {}
         if not os.path.isdir(LOCALE_DIR):
             return langs
         for fname in sorted(os.listdir(LOCALE_DIR)):
-            if fname.lower().endswith(".json"):
+            if fname.lower().endswith(".json") and not fname.startswith("suggestion_"):
                 code = os.path.splitext(fname)[0]
-                langs[code] = code
-        # Friendly display names for known languages
-        display_names = {"en": "English", "fr": "Français"}
-        for code in langs:
-            langs[code] = display_names.get(code, code)
+                # Try to read the display name from the file itself
+                display = code
+                try:
+                    path = os.path.join(LOCALE_DIR, fname)
+                    with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    display = data.get("language_name", code)
+                except Exception:
+                    pass
+                langs[code] = display
         return langs
 
     @property

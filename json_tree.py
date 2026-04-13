@@ -7,12 +7,14 @@ from tkinter import ttk
 class JsonTreeView(ttk.Frame):
     """Displays JSON as an editable tree with inline editing and context menus."""
 
-    def __init__(self, parent, locale=None):
+    def __init__(self, parent, locale=None, suggestions=None):
         super().__init__(parent)
         self._locale = locale
+        self._suggestions = suggestions or {}
         self._edit_entry = None
         self._edit_item = None
         self._edit_column = None
+        self._suggestion_listbox = None
         self._root_is_list = False
         self._detail_updating = False
         self._clipboard = None
@@ -133,6 +135,10 @@ class JsonTreeView(ttk.Frame):
         self._detail_val_label.configure(
             text=self._t("tree_heading_value") + ":"
         )
+
+    def update_suggestions(self, suggestions):
+        """Replace the suggestions dictionary."""
+        self._suggestions = suggestions or {}
 
     # ── Detail panel ──────────────────────────────────────────────
 
@@ -558,6 +564,11 @@ class JsonTreeView(ttk.Frame):
                 return
             self._start_edit(item, "value")
 
+    def _get_suggestions_for_item(self, item):
+        """Return suggestion list if the item's key matches a suggestion key."""
+        key = self.tree.item(item, "text").lower()
+        return self._suggestions.get(key, [])
+
     def _start_edit(self, item, column):
         bbox = self.tree.bbox(item, column)
         if not bbox:
@@ -584,7 +595,81 @@ class JsonTreeView(ttk.Frame):
 
         entry.bind("<Return>", lambda e: self._finish_edit())
         entry.bind("<Escape>", lambda e: self._cancel_edit())
-        entry.bind("<FocusOut>", lambda e: self._finish_edit())
+        entry.bind("<FocusOut>", lambda e: self._on_edit_focus_out())
+
+        # Show suggestion dropdown for value columns with matching keys
+        if column == "value":
+            suggestions = self._get_suggestions_for_item(item)
+            if suggestions:
+                self._show_suggestions(entry, bbox, suggestions)
+
+    def _show_suggestions(self, entry, bbox, suggestions):
+        """Show a dropdown listbox with suggestions below the edit entry."""
+        self._dismiss_suggestions()
+
+        listbox = tk.Listbox(
+            self.tree, relief="solid", borderwidth=1,
+            selectmode="browse", exportselection=False,
+        )
+        for s in suggestions:
+            listbox.insert("end", s)
+
+        # Position below the entry
+        max_visible = min(len(suggestions), 8)
+        row_height = 18
+        lb_height = max_visible * row_height + 4
+        lb_width = max(bbox[2], 150)
+        listbox.place(x=bbox[0], y=bbox[1] + bbox[3], width=lb_width, height=lb_height)
+        listbox.lift()
+
+        self._suggestion_listbox = listbox
+        self._suggestion_all = suggestions
+
+        # Typing in the entry filters the list
+        entry.bind("<KeyRelease>", self._on_suggestion_filter)
+        listbox.bind("<ButtonRelease-1>", lambda e: self._pick_suggestion())
+        listbox.bind("<Return>", lambda e: self._pick_suggestion())
+
+    def _on_suggestion_filter(self, event):
+        """Filter the suggestion listbox based on current entry text."""
+        if not self._suggestion_listbox or not self._edit_entry:
+            return
+        # Ignore navigation keys
+        if event.keysym in ("Up", "Down", "Return", "Escape"):
+            return
+        query = self._edit_entry.get().lower()
+        self._suggestion_listbox.delete(0, "end")
+        for s in self._suggestion_all:
+            if query in s.lower():
+                self._suggestion_listbox.insert("end", s)
+
+    def _pick_suggestion(self):
+        """Insert the selected suggestion into the edit entry."""
+        if not self._suggestion_listbox or not self._edit_entry:
+            return
+        sel = self._suggestion_listbox.curselection()
+        if not sel:
+            return
+        value = self._suggestion_listbox.get(sel[0])
+        self._edit_entry.delete(0, "end")
+        self._edit_entry.insert(0, value)
+        self._dismiss_suggestions()
+        self._finish_edit()
+
+    def _dismiss_suggestions(self):
+        """Remove the suggestion dropdown if it exists."""
+        if self._suggestion_listbox:
+            self._suggestion_listbox.destroy()
+            self._suggestion_listbox = None
+            self._suggestion_all = []
+
+    def _on_edit_focus_out(self):
+        """Handle focus leaving the edit entry."""
+        # Check if focus went to the suggestion listbox — if so, don't finish
+        focused = self.tree.focus_get()
+        if focused is self._suggestion_listbox:
+            return
+        self._finish_edit()
 
     def _finish_edit(self):
         if not self._edit_entry:
@@ -599,16 +684,20 @@ class JsonTreeView(ttk.Frame):
         self._edit_item = None
         self._edit_column = None
 
+        self._dismiss_suggestions()
+
         if column == "#0":
             self.tree.item(item, text=new_value)
         else:
             self.tree.item(item, values=(new_value,))
 
         entry.destroy()
+        self._on_tree_select()
 
     def _cancel_edit(self):
         if not self._edit_entry:
             return
+        self._dismiss_suggestions()
         entry = self._edit_entry
         self._edit_entry = None
         self._edit_item = None

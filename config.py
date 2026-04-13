@@ -26,3 +26,30 @@ def load_default_template(lang="en"):
             return json.load(f)
     except Exception:
         return {}
+
+
+def load_suggestions(lang="en"):
+    """Load value suggestions for the given language.
+
+    Always loads English as a base, then merges the target language on top.
+    Returns a dict mapping lowercase keys to lists of suggestion strings.
+    """
+    result = {}
+    # Always load English as the base
+    en_path = os.path.join(LOCALE_DIR, "suggestion_en.json")
+    try:
+        with open(en_path, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+        result = {k.lower(): v for k, v in raw.items()}
+    except Exception:
+        pass
+    # Merge language-specific suggestions on top
+    if lang != "en":
+        lang_path = os.path.join(LOCALE_DIR, f"suggestion_{lang}.json")
+        try:
+            with open(lang_path, "r", encoding="utf-8") as f:
+                raw = json.load(f)
+            result.update({k.lower(): v for k, v in raw.items()})
+        except Exception:
+            pass
+    return result

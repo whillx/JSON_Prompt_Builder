@@ -5,7 +5,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from config import APP_TITLE, EXAMPLES_DIR, load_default_template
+from config import APP_TITLE, EXAMPLES_DIR, load_default_template, load_suggestions
 from file_handler import FileHandler
 from json_tree import JsonTreeView
 from locale_handler import LocaleHandler
@@ -195,7 +195,10 @@ class App:
     # ── Tree view ─────────────────────────────────────────────────
 
     def _setup_tree(self):
-        self.json_tree = JsonTreeView(self.root, self.locale)
+        self.json_tree = JsonTreeView(
+            self.root, self.locale,
+            suggestions=load_suggestions(self.locale.current_language),
+        )
         self.json_tree.pack(fill="both", expand=True, padx=4, pady=(0, 4))
 
     # ── Keyboard shortcuts ────────────────────────────────────────
@@ -217,6 +220,7 @@ class App:
         self._build_menus()
         self._build_toolbar()
         self.json_tree.update_locale(self.locale)
+        self.json_tree.update_suggestions(load_suggestions(lang_code))
         self._update_title()
 
         # Reload the default template in the new language
