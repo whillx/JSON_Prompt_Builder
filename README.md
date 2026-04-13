@@ -10,6 +10,9 @@ A lightweight GUI tool for creating and editing structured JSON prompts for AI i
 
 - **Visual JSON tree editor** — view and edit your prompt structure as an expandable tree
 - **Inline editing** — double-click any key or value to edit it directly
+- **Value suggestions** — when editing a value whose key matches a predefined entry (e.g. Lens, Shot type, Weather), a filterable dropdown appears with suggested values
+- **Drag-and-drop reordering** — drag items up or down to reorder them within the same parent
+- **Copy and paste** — right-click to copy any item (including nested objects/arrays) and paste it as a sibling
 - **Detail panel** — a resizable panel below the tree displays the full text of long values with word wrap
 - **Add / remove fields** — toolbar buttons and right-click context menu to add siblings, children, objects, and arrays
 - **Type conversion** — convert any field between String, Number, Boolean, Null, Object, and Array via right-click
@@ -49,6 +52,9 @@ python3 main.py
 | Add a sibling field | Select an item, then click **+ String**, **+ Object**, or **+ Array** |
 | Add a child field | Select a container (object/array), then click **+ Child** |
 | Remove a field | Select it and click **- Remove** or press `Delete` |
+| Reorder items | Drag an item up or down among its siblings |
+| Copy an item | Right-click > **Copy** |
+| Paste an item | Right-click > **Paste** (inserts as a sibling, does not overwrite) |
 | Change field type | Right-click > **Convert To** > choose type |
 | Load an example | **File > Load Example** > choose a template |
 | Switch language | **Language** menu > choose language |
@@ -122,20 +128,39 @@ JSON_Prompt_Builder/
 │   ├── default_image_FR.json
 │   ├── default_video.json
 │   └── default_video_FR.json
-└── locale/                  # UI translation files
+└── locale/                  # UI translation & suggestion files
     ├── en.json
-    └── fr.json
+    ├── fr.json
+    ├── suggestion_en.json   # Value suggestions (English)
+    └── suggestion_fr.json   # Value suggestions (French)
 ```
 
 ## Adding a New Language
 
 1. Copy `locale/en.json` to `locale/xx.json` (where `xx` is the language code)
-2. Translate all the string values
-3. Optionally create a `examples/simple_example_XX.json` for a localized default template
-4. Add the mapping in `config.py` under `_TEMPLATE_FILES`
-5. Add a display name in `locale_handler.py` under `display_names`
+2. Translate all the string values, including the `"language_name"` key (this is displayed in the Language menu)
+3. Optionally create `locale/suggestion_xx.json` with value suggestions for that language's keys (English suggestions are always available as a base)
+4. Optionally create `examples/simple_example_XX.json` for a localized default template and add the mapping in `config.py` under `_TEMPLATE_FILES`
 
-The new language will automatically appear in the **Language** menu.
+The new language will automatically appear in the **Language** menu. No code changes are required.
+
+## Value Suggestions
+
+The app provides value suggestions for common prompt keys. When you double-click to edit a value, if the key matches an entry in the suggestion file, a dropdown appears with predefined options. You can pick a suggestion or type a custom value.
+
+Suggestion files are stored in `locale/` as `suggestion_xx.json`. English suggestions are always loaded as a base, with the active language's suggestions merged on top.
+
+**Built-in suggestion keys:** Lens, Shot type, Weather, Time of Day, Medium, Angle
+
+To add custom suggestions, edit the appropriate `locale/suggestion_xx.json` file. The format is:
+
+```json
+{
+    "Key Name": ["Option 1", "Option 2", "Option 3"]
+}
+```
+
+Key matching is case-insensitive.
 
 ## Adding Custom Examples
 
