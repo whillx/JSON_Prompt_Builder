@@ -7,6 +7,7 @@ APP_TITLE = "JSON Prompt Builder"
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 EXAMPLES_DIR = os.path.join(APP_DIR, "examples")
 LOCALE_DIR = os.path.join(APP_DIR, "locale")
+SUGGESTION_FILE = os.path.join(APP_DIR, "suggestion.json")
 FILE_TYPES = [("JSON files", "*.json"), ("All files", "*.*")]
 
 # Maps language codes to their simple_example file names.
@@ -24,5 +25,18 @@ def load_default_template(lang="en"):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
+    except Exception:
+        return {}
+
+
+def load_suggestions():
+    """Load value suggestions from suggestion.json.
+
+    Returns a dict mapping lowercase keys to lists of suggestion strings.
+    """
+    try:
+        with open(SUGGESTION_FILE, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+        return {k.lower(): v for k, v in raw.items()}
     except Exception:
         return {}
