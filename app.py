@@ -135,6 +135,8 @@ class App:
     def _build_toolbar(self):
         t = self.locale.t
         self._tooltips.clear()
+        self._add_child_label = None
+        self._add_child_btn = None
 
         for widget in self._toolbar_frame.winfo_children():
             widget.destroy()
@@ -170,15 +172,16 @@ class App:
         )
 
         # ── Add Child ──
-        ttk.Label(
+        self._add_child_label = ttk.Label(
             self._toolbar_frame, text=t("toolbar_add_child_label")
-        ).pack(side="left", padx=(4, 2))
-        btn = ttk.Button(
+        )
+        self._add_child_label.pack(side="left", padx=(4, 2))
+        self._add_child_btn = ttk.Button(
             self._toolbar_frame, text=t("toolbar_add_child"), width=9,
             command=lambda: self.json_tree.add_child(),
         )
-        btn.pack(side="left", padx=2)
-        self._tooltips.append(Tooltip(btn, t("tooltip_add_child")))
+        self._add_child_btn.pack(side="left", padx=2)
+        self._tooltips.append(Tooltip(self._add_child_btn, t("tooltip_add_child")))
 
         ttk.Separator(self._toolbar_frame, orient="vertical").pack(
             side="left", fill="y", padx=6, pady=2
@@ -192,6 +195,9 @@ class App:
         btn.pack(side="left", padx=2)
         self._tooltips.append(Tooltip(btn, t("tooltip_remove")))
 
+        # Sync initial state
+        self._on_tree_selection_changed()
+
     # ── Tree view ─────────────────────────────────────────────────
 
     def _setup_tree(self):
@@ -200,6 +206,22 @@ class App:
             suggestions=load_suggestions(self.locale.current_language),
         )
         self.json_tree.pack(fill="both", expand=True, padx=4, pady=(0, 4))
+        self.json_tree.tree.bind("<<TreeviewSelect>>", self._on_tree_selection_changed)
+
+    def _on_tree_selection_changed(self, event=None):
+        """Grey out Add Child when the selected item cannot have children."""
+        selected = self.json_tree.tree.selection()
+        if selected:
+            tags = self.json_tree.tree.item(selected[0], "tags")
+            can_have_children = "dict" in tags or "list" in tags
+        else:
+            can_have_children = False
+        state = "normal" if can_have_children else "disabled"
+        if hasattr(self, "_add_child_btn"):
+            self._add_child_btn.configure(state=state)
+            self._add_child_label.configure(
+                foreground="" if can_have_children else "gray"
+            )
 
     # ── Keyboard shortcuts ────────────────────────────────────────
 
