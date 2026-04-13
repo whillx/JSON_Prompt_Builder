@@ -203,6 +203,7 @@ class JsonTreeView(ttk.Frame):
 
     def load_json(self, data):
         """Replace tree contents with the given JSON data."""
+        self._cancel_edit()
         self.clear()
         self._root_is_list = isinstance(data, list)
         if isinstance(data, dict):
@@ -686,10 +687,11 @@ class JsonTreeView(ttk.Frame):
 
         self._dismiss_suggestions()
 
-        if column == "#0":
-            self.tree.item(item, text=new_value)
-        else:
-            self.tree.item(item, values=(new_value,))
+        if item and self.tree.exists(item):
+            if column == "#0":
+                self.tree.item(item, text=new_value)
+            else:
+                self.tree.item(item, values=(new_value,))
 
         entry.destroy()
         self._on_tree_select()
