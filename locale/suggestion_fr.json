@@ -1,8 +1,0 @@
-{
-	"Objectif": ["24mm", "35mm", "50mm", "85mm", "100mm", "135mm", "200mm"],
-	"Type de plan": ["Gros plan", "Plan moyen", "Plan entier", "Plan large", "Très gros plan", "Par-dessus l'épaule", "Vue plongeante", "Contre-plongée", "Plongée", "Plan néerlandais", "Vue subjective"],
-	"Météo": ["Ensoleillé", "Nuageux", "Couvert", "Pluvieux", "Orageux", "Neigeux", "Brumeux", "Brouillard", "Venteux", "Voilé"],
-	"Moment de la journée": ["Aube", "Lever du soleil", "Matin", "Midi", "Après-midi", "Heure dorée", "Coucher du soleil", "Crépuscule", "Entre chien et loup", "Nuit", "Minuit", "Heure bleue"],
-	"Médium": ["Photographie", "Peinture à l'huile", "Aquarelle", "Art numérique", "Croquis au crayon", "Dessin au fusain", "Peinture acrylique", "Gouache", "Pastel", "Illustration à l'encre", "Rendu 3D", "Image de film"],
-	"Angle": ["Au niveau des yeux", "Contre-plongée", "Plongée", "Vue plongeante", "Contre-plongée extrême", "Plan néerlandais", "Vue aérienne", "Trois-quarts", "Profil", "Face"]
-}

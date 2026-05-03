@@ -7,6 +7,7 @@ APP_TITLE = "JSON Prompt Builder"
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 EXAMPLES_DIR = os.path.join(APP_DIR, "examples")
 LOCALE_DIR = os.path.join(APP_DIR, "locale")
+SUGGESTION_DIR = os.path.join(APP_DIR, "Suggestion")
 FILE_TYPES = [("JSON files", "*.json"), ("All files", "*.*")]
 
 # Maps language codes to their simple_example file names.
@@ -28,28 +29,27 @@ def load_default_template(lang="en"):
         return {}
 
 
-def load_suggestions(lang="en"):
-    """Load value suggestions for the given language.
+def load_suggestions():
+    """Load value suggestions from the Suggestion folder.
 
-    Always loads English as a base, then merges the target language on top.
-    Returns a dict mapping lowercase keys to lists of suggestion strings.
+    Each .txt file in the folder is one suggestion list. The filename
+    (without extension) is the field name; each non-empty line is a
+    suggested value. Returns a dict mapping lowercase field names to
+    lists of suggestion strings.
     """
     result = {}
-    # Always load English as the base
-    en_path = os.path.join(LOCALE_DIR, "suggestion_en.json")
-    try:
-        with open(en_path, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-        result = {k.lower(): v for k, v in raw.items()}
-    except Exception:
-        pass
-    # Merge language-specific suggestions on top
-    if lang != "en":
-        lang_path = os.path.join(LOCALE_DIR, f"suggestion_{lang}.json")
+    if not os.path.isdir(SUGGESTION_DIR):
+        return result
+    for entry in os.listdir(SUGGESTION_DIR):
+        if not entry.lower().endswith(".txt"):
+            continue
+        key = os.path.splitext(entry)[0].lower()
+        path = os.path.join(SUGGESTION_DIR, entry)
         try:
-            with open(lang_path, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-            result.update({k.lower(): v for k, v in raw.items()})
+            with open(path, "r", encoding="utf-8") as f:
+                values = [line.strip() for line in f if line.strip()]
         except Exception:
-            pass
+            continue
+        if values:
+            result[key] = values
     return result

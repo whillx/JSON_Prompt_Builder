@@ -1,0 +1,12 @@
+Dawn
+Sunrise
+Morning
+Midday
+Afternoon
+Golden hour
+Sunset
+Dusk
+Twilight
+Night
+Midnight
+Blue hour

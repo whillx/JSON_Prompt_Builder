@@ -197,7 +197,7 @@ class App:
     def _setup_tree(self):
         self.json_tree = JsonTreeView(
             self.root, self.locale,
-            suggestions=load_suggestions(self.locale.current_language),
+            suggestions=load_suggestions(),
         )
         self.json_tree.pack(fill="both", expand=True, padx=4, pady=(0, 4))
 
@@ -220,7 +220,6 @@ class App:
         self._build_menus()
         self._build_toolbar()
         self.json_tree.update_locale(self.locale)
-        self.json_tree.update_suggestions(load_suggestions(lang_code))
         self._update_title()
 
         # Reload the default template in the new language
