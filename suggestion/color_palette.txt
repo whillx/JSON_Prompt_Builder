@@ -1,0 +1,7 @@
+natural color
+bright
+dark
+low light
+saturated
+low-saturation
+black and white

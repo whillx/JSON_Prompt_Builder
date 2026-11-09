@@ -7,26 +7,35 @@ APP_TITLE = "JSON Prompt Builder"
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 EXAMPLES_DIR = os.path.join(APP_DIR, "examples")
 LOCALE_DIR = os.path.join(APP_DIR, "locale")
-SUGGESTION_DIR = os.path.join(APP_DIR, "Suggestion")
+SUGGESTION_DIR = os.path.join(APP_DIR, "suggestion")
 FILE_TYPES = [("JSON files", "*.json"), ("All files", "*.*")]
 
-# Maps language codes to their simple_example file names.
-# Falls back to simple_example.json for unlisted languages.
-_TEMPLATE_FILES = {
-    "en": "simple_example.json",
-    "fr": "simple_example_FR.json",
-}
+# Default template files share a common prefix; the language is encoded
+# as an uppercase suffix (e.g. empty_template_FR.json). The bare file
+# (empty_template.json) is the English/fallback version.
+_TEMPLATE_PREFIX = "empty_template"
 
 
 def load_default_template(lang="en"):
-    """Load the default template for the given language."""
-    filename = _TEMPLATE_FILES.get(lang, _TEMPLATE_FILES["en"])
-    path = os.path.join(EXAMPLES_DIR, filename)
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    """Load the default template for the given language.
+
+    Looks for {PREFIX}_{LANG}.json (uppercase) and falls back to
+    {PREFIX}.json if no localized file exists.
+    """
+    candidates = []
+    if lang and lang.lower() != "en":
+        candidates.append(f"{_TEMPLATE_PREFIX}_{lang.upper()}.json")
+    candidates.append(f"{_TEMPLATE_PREFIX}.json")
+    for filename in candidates:
+        path = os.path.join(EXAMPLES_DIR, filename)
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            continue
+    return {}
 
 
 def load_suggestions():

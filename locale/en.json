@@ -8,6 +8,9 @@
 	"file_open": "Open...",
 	"file_save": "Save",
 	"file_save_as": "Save As...",
+	"file_copy_clipboard": "Copy to Clipboard",
+	"file_copy_clipboard_condensed": "Copy to Clipboard (Condensed)",
+	"file_copy_clipboard_text": "Copy to Clipboard (Text)",
 	"file_load_example": "Load Example",
 	"file_exit": "Exit",
 

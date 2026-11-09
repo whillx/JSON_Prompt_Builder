@@ -2,7 +2,7 @@
 
 A lightweight GUI tool for creating and editing structured JSON prompts for AI image and video generation. Built with Python and Tkinter — no external dependencies required.
 
-![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 ![Dependencies](https://img.shields.io/badge/Dependencies-None-green)
 
@@ -13,6 +13,10 @@ A lightweight GUI tool for creating and editing structured JSON prompts for AI i
 - **Detail panel** — a resizable panel below the tree displays the full text of long values with word wrap
 - **Add / remove fields** — toolbar buttons and right-click context menu to add siblings, children, objects, and arrays
 - **Type conversion** — convert any field between String, Number, Boolean, Null, Object, and Array via right-click
+- **Drag-and-drop reordering** — drag items to reorder them among their siblings
+- **Copy and paste** — right-click to copy any item and paste it as a sibling elsewhere
+- **Value suggestions** — a filterable dropdown of suggested values for common fields (shot size, lens, lighting, and more)
+- **Clipboard export** — copy the prompt as JSON, condensed JSON (empty fields removed), or plain text
 - **Example templates** — built-in examples optimized for AI image and video generation (File > Load Example)
 - **Multi-language UI** — English and French out of the box, with easy extensibility
 - **Persistent preferences** — language choice is saved to `user.ini` and restored on next launch
@@ -22,23 +26,42 @@ A lightweight GUI tool for creating and editing structured JSON prompts for AI i
 
 ## Quick Start
 
-**Prerequisites:** Python 3.7 or later (Tkinter is included with standard Python installations).
+The recommended way to run the app is with [uv](https://docs.astral.sh/uv/). uv downloads its own copy of Python (Tkinter included), so you don't need to install Python or any system packages, and every OS runs the same version.
 
-### Windows
+### 1. Install uv (once)
 
-Double-click `JSON_Prompt_Builder.bat`, or run from terminal:
-
-```
-python main.py
-```
-
-### macOS / Linux
-
-Double-click `JSON_Prompt_Builder.command`, or run from terminal:
+**Windows** (PowerShell):
 
 ```
-python3 main.py
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
+
+**macOS / Linux**:
+
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### 2. Run the app
+
+- **Windows**: double-click `JSON_Prompt_Builder.bat`
+- **macOS / Linux**: double-click `JSON_Prompt_Builder.command`
+- **Any OS, from a terminal** in the project folder:
+
+  ```
+  uv run main.py
+  ```
+
+The first run downloads Python (the version in `.python-version`) and creates a `.venv/` folder in the project. Later runs start immediately.
+
+### Without uv
+
+The launchers fall back to the system Python if uv isn't installed. You need Python 3.10 or later with Tkinter:
+
+- **Windows / macOS**: the installers from [python.org](https://www.python.org/downloads/) include Tkinter.
+- **Linux**: Tkinter is often a separate package, e.g. `sudo apt install python3-tk` (Debian/Ubuntu), `sudo dnf install python3-tkinter` (Fedora) or `sudo pacman -S tk` (Arch).
+
+Then run `python main.py` (Windows) or `python3 main.py` (macOS/Linux).
 
 ## Usage
 
@@ -105,37 +128,45 @@ python3 main.py
 
 ```
 JSON_Prompt_Builder/
-├── main.py                  # Entry point
-├── app.py                   # Main window, menus, toolbar
-├── json_tree.py             # Tree widget with inline editing & detail panel
-├── file_handler.py          # JSON file I/O
-├── config.py                # Constants and default template loader
-├── locale_handler.py        # Multi-language support
-├── user_settings.py         # Persistent user preferences (user.ini)
-├── tooltip.py               # Hover tooltip widget
-├── JSON_Prompt_Builder.bat  # Windows launcher
-├── JSON_Prompt_Builder.command  # macOS launcher
-├── examples/                # Example prompt templates
-│   ├── simple_example.json
-│   ├── simple_example_FR.json
+├── main.py                      # Entry point
+├── app.py                       # Main window, menus, toolbar
+├── json_tree.py                 # Tree widget with inline editing & detail panel
+├── file_handler.py              # JSON file I/O
+├── config.py                    # Paths, default template and suggestion loaders
+├── locale_handler.py            # Multi-language support
+├── user_settings.py             # Persistent user preferences (user.ini)
+├── tooltip.py                   # Hover tooltip widget
+├── pyproject.toml               # Project metadata for uv
+├── .python-version              # Python version used by uv
+├── JSON_Prompt_Builder.bat      # Windows launcher
+├── JSON_Prompt_Builder.command  # macOS / Linux launcher
+├── examples/                    # Prompt templates (File > Load Example)
+│   ├── empty_template.json      # Default template (English)
+│   ├── empty_template_FR.json   # Default template (French)
 │   ├── default_image.json
 │   ├── default_image_FR.json
 │   ├── default_video.json
 │   └── default_video_FR.json
-└── locale/                  # UI translation files
-    ├── en.json
-    └── fr.json
+├── locale/                      # UI translation files
+│   ├── en.json
+│   └── fr.json
+└── suggestion/                  # Value suggestions, one .txt file per field
+    ├── shot_size.txt
+    ├── time_of_day.txt
+    └── ...
 ```
 
 ## Adding a New Language
 
-1. Copy `locale/en.json` to `locale/xx.json` (where `xx` is the language code)
-2. Translate all the string values
-3. Optionally create a `examples/simple_example_XX.json` for a localized default template
-4. Add the mapping in `config.py` under `_TEMPLATE_FILES`
-5. Add a display name in `locale_handler.py` under `display_names`
+1. Copy `locale/en.json` to `locale/xx.json` (where `xx` is the language code).
+2. Translate all the string values, including `"language_name"`, which is the name shown in the **Language** menu.
+3. Optionally add `examples/empty_template_XX.json` (uppercase code) as the default template for that language. Without it, the English template is used.
 
-The new language will automatically appear in the **Language** menu.
+The new language appears in the **Language** menu automatically. No code changes needed.
+
+## Adding Value Suggestions
+
+Each `.txt` file in `suggestion/` holds suggestions for one field, one value per line. The file name (without `.txt`) is matched against the key being edited, ignoring case. For example, `suggestion/time_of_day.txt` provides suggestions for a `time_of_day` field. Add or edit files at any time; changes are picked up on the next edit, without restarting.
 
 ## Adding Custom Examples
 

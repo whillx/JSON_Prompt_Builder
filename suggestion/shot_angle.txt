@@ -1,0 +1,11 @@
+Low-angle
+High-angle
+Eye-level
+Three-quarter
+Profile
+Ground-level shot
+Worm's-eye view, looking straight up
+Overhead top-down view
+Hero angle
+Dutch angle
+Isometric view

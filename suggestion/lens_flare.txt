@@ -1,0 +1,8 @@
+Anamorphic Lens Flare
+Hexagonal Flare
+Octagonal Flare
+Aperture Ghosting
+Orbital Rings
+Sunstars / Diffraction Spikes
+Concentric Circles
+Volumetric Lighting

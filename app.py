@@ -5,7 +5,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from config import APP_TITLE, EXAMPLES_DIR, load_default_template, load_suggestions
+from config import APP_TITLE, EXAMPLES_DIR, load_default_template
 from file_handler import FileHandler
 from json_tree import JsonTreeView
 from locale_handler import LocaleHandler
@@ -65,6 +65,18 @@ class App:
             label=t("file_save_as"),
             command=self._save_file_as,
             accelerator="Ctrl+Shift+S",
+        )
+        file_menu.add_command(
+            label=t("file_copy_clipboard"),
+            command=self._copy_to_clipboard,
+        )
+        file_menu.add_command(
+            label=t("file_copy_clipboard_condensed"),
+            command=self._copy_to_clipboard_condensed,
+        )
+        file_menu.add_command(
+            label=t("file_copy_clipboard_text"),
+            command=self._copy_to_clipboard_text,
         )
         file_menu.add_separator()
 
@@ -195,10 +207,7 @@ class App:
     # ── Tree view ─────────────────────────────────────────────────
 
     def _setup_tree(self):
-        self.json_tree = JsonTreeView(
-            self.root, self.locale,
-            suggestions=load_suggestions(),
-        )
+        self.json_tree = JsonTreeView(self.root, self.locale)
         self.json_tree.pack(fill="both", expand=True, padx=4, pady=(0, 4))
 
     # ── Keyboard shortcuts ────────────────────────────────────────
@@ -253,6 +262,92 @@ class App:
         data = self.json_tree.to_json()
         if self.file_handler.save_file_as(data):
             self._update_title()
+
+    def _copy_to_clipboard(self):
+        data = self._prune(self.json_tree.to_json())
+        text = json.dumps(data, indent="\t", ensure_ascii=False)
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+
+    def _copy_to_clipboard_condensed(self):
+        data = self._prune(self.json_tree.to_json())
+        text = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+
+    @staticmethod
+    def _prune(node):
+        """Drop null values and empty containers, recursively.
+
+        Returns None when the node itself should be removed by its
+        parent. Top-level callers receive {} or [] if the whole tree
+        prunes away.
+        """
+        _MISSING = object()
+
+        def prune(n):
+            if n is None:
+                return _MISSING
+            if isinstance(n, str) and n == "":
+                return _MISSING
+            if isinstance(n, dict):
+                out = {}
+                for k, v in n.items():
+                    pv = prune(v)
+                    if pv is not _MISSING:
+                        out[k] = pv
+                return out if out else _MISSING
+            if isinstance(n, list):
+                out = []
+                for v in n:
+                    pv = prune(v)
+                    if pv is not _MISSING:
+                        out.append(pv)
+                return out if out else _MISSING
+            return n
+
+        result = prune(node)
+        if result is _MISSING:
+            return [] if isinstance(node, list) else {}
+        return result
+
+    def _copy_to_clipboard_text(self):
+        data = self.json_tree.to_json()
+        text = self._to_text_format(data)
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+
+    @staticmethod
+    def _to_text_format(data):
+        """Flatten JSON to "key: val, val; key: val;" form.
+
+        Top-level keys are kept as labels; deeper keys are dropped and
+        only their string values bubble up. Numbers, booleans and null
+        are skipped.
+        """
+        def collect_strings(node, out):
+            if isinstance(node, str):
+                if node:
+                    out.append(node)
+            elif isinstance(node, dict):
+                for v in node.values():
+                    collect_strings(v, out)
+            elif isinstance(node, list):
+                for v in node:
+                    collect_strings(v, out)
+
+        if not isinstance(data, dict):
+            values = []
+            collect_strings(data, values)
+            return ", ".join(values)
+
+        groups = []
+        for key, value in data.items():
+            values = []
+            collect_strings(value, values)
+            if values:
+                groups.append(f"{key}: {', '.join(values)};")
+        return "\n\n".join(groups)
 
     # ── Clear all ─────────────────────────────────────────────────
 

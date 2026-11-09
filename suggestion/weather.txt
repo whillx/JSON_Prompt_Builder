@@ -1,0 +1,11 @@
+Sunny
+Cloudy
+Overcast
+Rainy
+Stormy
+Snowy
+Foggy
+Misty
+Windy
+Hazy
+Studio

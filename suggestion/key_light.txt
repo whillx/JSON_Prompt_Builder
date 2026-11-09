@@ -1,0 +1,9 @@
+Rembrandt Lighting
+Split Lighting
+Butterfly Lighting
+Loop Lighting
+Rim light
+Backlit
+Bottom-Up / Under-Lighting
+Top-Down / Overhead Lighting
+Side-Lighting

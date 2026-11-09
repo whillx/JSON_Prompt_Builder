@@ -1,0 +1,9 @@
+at center
+at left
+at right
+at far left
+at far right
+at top-left
+at top-right
+at lower-left
+at lower-right

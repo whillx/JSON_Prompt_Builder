@@ -3,18 +3,21 @@
 import tkinter as tk
 from tkinter import ttk
 
+from config import load_suggestions
+
 
 class JsonTreeView(ttk.Frame):
     """Displays JSON as an editable tree with inline editing and context menus."""
 
-    def __init__(self, parent, locale=None, suggestions=None):
+    def __init__(self, parent, locale=None):
         super().__init__(parent)
         self._locale = locale
-        self._suggestions = suggestions or {}
         self._edit_entry = None
         self._edit_item = None
         self._edit_column = None
+        self._suggestion_popup = None
         self._suggestion_listbox = None
+        self._suggestion_all = []
         self._root_is_list = False
         self._detail_updating = False
         self._clipboard = None
@@ -561,9 +564,25 @@ class JsonTreeView(ttk.Frame):
             self._start_edit(item, "value")
 
     def _get_suggestions_for_item(self, item):
-        """Return suggestion list if the item's key matches a suggestion key."""
-        key = self.tree.item(item, "text").lower()
-        return self._suggestions.get(key, [])
+        """Return suggestion list if the item's key matches a suggestion file.
+
+        For values inside an array, the item's own "key" is just an index
+        like [0], so walk up to the first non-list ancestor and use its
+        key (the array's name) for the lookup.
+
+        Re-reads the suggestion folder on each call so newly added or
+        edited .txt files are picked up without restarting the app.
+        """
+        node = item
+        while True:
+            parent = self.tree.parent(node)
+            if not parent:
+                break
+            if "list" not in self.tree.item(parent, "tags"):
+                break
+            node = parent
+        key = self.tree.item(node, "text").lower()
+        return load_suggestions().get(key, [])
 
     def _start_edit(self, item, column):
         bbox = self.tree.bbox(item, column)
@@ -600,24 +619,39 @@ class JsonTreeView(ttk.Frame):
                 self._show_suggestions(entry, bbox, suggestions)
 
     def _show_suggestions(self, entry, bbox, suggestions):
-        """Show a dropdown listbox with suggestions below the edit entry."""
+        """Show a dropdown listbox with suggestions below the edit entry.
+
+        Uses a borderless Toplevel so the popup floats above sibling
+        widgets (e.g. the detail panel below the tree) instead of
+        being clipped by the tree's bounds.
+        """
         self._dismiss_suggestions()
 
+        popup = tk.Toplevel(self.tree)
+        popup.wm_overrideredirect(True)
+        try:
+            popup.wm_attributes("-topmost", True)
+        except tk.TclError:
+            pass
+
         listbox = tk.Listbox(
-            self.tree, relief="solid", borderwidth=1,
+            popup, relief="solid", borderwidth=1,
             selectmode="browse", exportselection=False,
         )
         for s in suggestions:
             listbox.insert("end", s)
+        listbox.pack(fill="both", expand=True)
 
-        # Position below the entry
+        # Position below the entry, in screen coordinates
         max_visible = min(len(suggestions), 8)
         row_height = 18
         lb_height = max_visible * row_height + 4
         lb_width = max(bbox[2], 150)
-        listbox.place(x=bbox[0], y=bbox[1] + bbox[3], width=lb_width, height=lb_height)
-        listbox.lift()
+        screen_x = self.tree.winfo_rootx() + bbox[0]
+        screen_y = self.tree.winfo_rooty() + bbox[1] + bbox[3]
+        popup.wm_geometry(f"{lb_width}x{lb_height}+{screen_x}+{screen_y}")
 
+        self._suggestion_popup = popup
         self._suggestion_listbox = listbox
         self._suggestion_all = suggestions
 
@@ -654,17 +688,29 @@ class JsonTreeView(ttk.Frame):
 
     def _dismiss_suggestions(self):
         """Remove the suggestion dropdown if it exists."""
-        if self._suggestion_listbox:
-            self._suggestion_listbox.destroy()
-            self._suggestion_listbox = None
-            self._suggestion_all = []
+        if self._suggestion_popup:
+            self._suggestion_popup.destroy()
+            self._suggestion_popup = None
+        self._suggestion_listbox = None
+        self._suggestion_all = []
 
     def _on_edit_focus_out(self):
-        """Handle focus leaving the edit entry."""
-        # Check if focus went to the suggestion listbox — if so, don't finish
-        focused = self.tree.focus_get()
-        if focused is self._suggestion_listbox:
-            return
+        """Handle focus leaving the edit entry.
+
+        The suggestion popup is a borderless Toplevel that doesn't take
+        focus, so checking focus_get() can't tell us the user is about
+        to click a suggestion. Instead, check whether the mouse pointer
+        is currently over the popup — if so, skip the finish and let
+        the listbox click handler run.
+        """
+        if self._suggestion_popup:
+            try:
+                x, y = self._suggestion_popup.winfo_pointerxy()
+                under = self._suggestion_popup.winfo_containing(x, y)
+                if under is not None and under.winfo_toplevel() is self._suggestion_popup:
+                    return
+            except tk.TclError:
+                pass
         self._finish_edit()
 
     def _finish_edit(self):

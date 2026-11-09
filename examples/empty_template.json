@@ -1,28 +1,48 @@
 {
-	"Scene": {
-		"General Description": "",
-		"Environment": "",
-		"Time of Day": "",
-		"Weather": "",
-		"Objects": []
+	"Composition": {
+		"shot_size": "",
+		"shot_angle": "",
+		"framing": ""
 	},
-	"Style": {
-		"Medium": "",
-		"Aesthetic": "",
-		"Color Palette": ""
+	"Subject": {
+		"description": "",
+		"placement": "",
+		"details": ""
 	},
-	"Camera": {
-		"Shot Type": "",
-		"Angle": "",
-		"Lens": "",
-		"Depth of Field": ""
+	"Environment": {
+		"location": "",
+		"time_of_day": "",
+		"weather": "",
+		"details": ""
+	},
+	"Optical Effects": {
+		"lens_flare": "",
+		"depth_of_field": ""
 	},
 	"Lighting": {
-		"Key Light": "",
-		"Atmosphere": ""
+		"key_light": "",
+		"light_hardness": "",
+		"light_contrast": "",
+		"atmosphere": ""
+	},
+	"Style": {
+		"medium": "",
+		"aesthetic": "",
+		"influence": "",
+		"mood": "",
+		"era": "",
+		"color_palette": [""]
+	},
+	"Camera": {
+		"camera_model": "",
+		"lens_model": "",
+		"lens_type": "",
+		"focal_length": "",
+		"f-number": ""
 	},
 	"Technical": {
-		"Resolution": "",
-		"Aspect Ratio": ""
+		"color_space": "LogC4",
+		"resolution": "8K",
+		"aspect_ratio": "16:9"
 	}
 }

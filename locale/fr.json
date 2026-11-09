@@ -8,6 +8,9 @@
 	"file_open": "Ouvrir...",
 	"file_save": "Enregistrer",
 	"file_save_as": "Enregistrer sous...",
+	"file_copy_clipboard": "Copier dans le presse-papiers",
+	"file_copy_clipboard_condensed": "Copier dans le presse-papiers (compact)",
+	"file_copy_clipboard_text": "Copier dans le presse-papiers (texte)",
 	"file_load_example": "Charger un exemple",
 	"file_exit": "Quitter",
 
